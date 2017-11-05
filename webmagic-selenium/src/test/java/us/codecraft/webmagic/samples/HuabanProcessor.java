@@ -38,8 +38,10 @@ public class HuabanProcessor implements PageProcessor {
 
     public static void main(String[] args) {
         Spider.create(new HuabanProcessor()).thread(5)
-                .addPipeline(new FilePipeline("/data/webmagic/test/"))
-                .setDownloader(new SeleniumDownloader("/Users/yihua/Downloads/chromedriver"))
+                //.addPipeline(new FilePipeline("/data/webmagic/test/"))
+                .addPipeline(new FilePipeline("E:\\git_download\\Crawler_Projects"))// yelldo
+                //.setDownloader(new SeleniumDownloader("/Users/yihua/Downloads/chromedriver"))
+                .setDownloader(new SeleniumDownloader("E:\\chrome_extensions\\selenium"))// yelldo
                 .addUrl("http://huaban.com/")
                 .runAsync();
     }
