@@ -3,6 +3,7 @@ package us.codecraft.webmagic.samples;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.pipeline.JsonFilePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 
 /**
@@ -46,6 +47,7 @@ public class SinaBlogProcessor implements PageProcessor {
                 .addUrl("http://blog.sina.com.cn/s/articlelist_1487828712_0_1.html")
                 //.addPipeline(new JsonFilePipeline("D:\\webmagic\\"))
                 //.addPipeline(new JsonFilePipeline("E:\\git_download\\Crawler_Projects"))
+                .addPipeline(new JsonFilePipeline(("/usr/local/file_store")))
                 .run();
     }
 }
