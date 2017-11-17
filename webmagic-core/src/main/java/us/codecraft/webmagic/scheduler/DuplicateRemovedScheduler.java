@@ -38,10 +38,13 @@ public abstract class DuplicateRemovedScheduler implements Scheduler {
         }
     }
 
+    // 重试的请求，可以重新添加到队列中，可能有时候某些网络问题导致，请求不成功，
+    // 但是在程序的内存中已经记录了这个请求的url地址，所以需要这个条件判断来把，这个请求添加进队列中
     protected boolean shouldReserved(Request request) {
         return request.getExtra(Request.CYCLE_TRIED_TIMES) != null;
     }
 
+    // POST 请求允许重复发送？ 这个是处于什么目的呢？？？
     protected boolean noNeedToRemoveDuplicate(Request request) {
         return HttpConstant.Method.POST.equalsIgnoreCase(request.getMethod());
     }

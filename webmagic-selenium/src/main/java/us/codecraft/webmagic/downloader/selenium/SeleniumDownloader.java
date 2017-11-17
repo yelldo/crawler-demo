@@ -35,8 +35,6 @@ public class SeleniumDownloader implements Downloader, Closeable {
 
 	private int poolSize = 1;
 
-	private static final String DRIVER_PHANTOMJS = "phantomjs";
-
 	/**
 	 * 新建
 	 *

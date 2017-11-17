@@ -283,6 +283,7 @@ public class Spider implements Runnable, Task {
             pipelines.add(new ConsolePipeline());
         }
         downloader.setThread(threadNum);
+        // 程序刚启动的时候，threadPool is null and executorService is null
         if (threadPool == null || threadPool.isShutdown()) {
             if (executorService != null && !executorService.isShutdown()) {
                 threadPool = new CountableThreadPool(threadNum, executorService);
@@ -290,6 +291,8 @@ public class Spider implements Runnable, Task {
                 threadPool = new CountableThreadPool(threadNum);
             }
         }
+
+        // 这个startRequests 是干嘛用的还没看到？？？
         if (startRequests != null) {
             for (Request request : startRequests) {
                 addRequest(request);
@@ -305,6 +308,7 @@ public class Spider implements Runnable, Task {
         initComponent();
         logger.info("Spider {} started!",getUUID());
         while (!Thread.currentThread().isInterrupted() && stat.get() == STAT_RUNNING) {
+            // 如果队列返回空，则表示队列中已经没有请求可以爬取了
             final Request request = scheduler.poll(this);
             if (request == null) {
                 if (threadPool.getThreadAlive() == 0 && exitWhenComplete) {
@@ -313,11 +317,13 @@ public class Spider implements Runnable, Task {
                 // wait until new url added
                 waitNewUrl();
             } else {
+                // 刚启动
                 threadPool.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             processRequest(request);
+                            // 成功信息记录
                             onSuccess(request);
                         } catch (Exception e) {
                             onError(request);
@@ -332,6 +338,7 @@ public class Spider implements Runnable, Task {
         }
         stat.set(STAT_STOPPED);
         // release some resources
+        // 看过之后，感觉这个方法没有释放什么东西的样子？？？
         if (destroyWhenExit) {
             close();
         }
@@ -410,11 +417,16 @@ public class Spider implements Runnable, Task {
     }
 
     private void onDownloadSuccess(Request request, Page page) {
+        // 请求成功，状态码 200
         if (site.getAcceptStatCode().contains(page.getStatusCode())){
+            // 执行爬虫逻辑 ！！！
             pageProcessor.process(page);
+            // 垂直爬取，继续添加页面中包含的符合规则的url
             extractAndAddRequests(page, spawnUrl);
             if (!page.getResultItems().isSkip()) {
+                // 页面爬取的结果内容需要存储
                 for (Pipeline pipeline : pipelines) {
+                    // 数据存储 ！！！
                     pipeline.process(page.getResultItems(), this);
                 }
             }

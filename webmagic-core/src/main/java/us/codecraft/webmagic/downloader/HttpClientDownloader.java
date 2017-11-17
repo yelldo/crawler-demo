@@ -79,10 +79,13 @@ public class HttpClientDownloader extends AbstractDownloader {
         CloseableHttpResponse httpResponse = null;
         CloseableHttpClient httpClient = getHttpClient(task.getSite());
         Proxy proxy = proxyProvider != null ? proxyProvider.getProxy(task) : null;
+        // 构建http请求
         HttpClientRequestContext requestContext = httpUriRequestConverter.convert(request, task.getSite(), proxy);
         Page page = Page.fail();
         try {
+            // 发起请求
             httpResponse = httpClient.execute(requestContext.getHttpUriRequest(), requestContext.getHttpClientContext());
+            // 处理响应的内容
             page = handleResponse(request, request.getCharset() != null ? request.getCharset() : task.getSite().getCharset(), httpResponse, task);
             onSuccess(request);
             logger.info("downloading page success {}", request.getUrl());
